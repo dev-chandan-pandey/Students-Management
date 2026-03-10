@@ -1,62 +1,59 @@
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { studentSchema } from "../utils/validationSchema"
-import { Student } from "../types/student"
+import { useEffect } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { studentSchema } from "../utils/validationSchema";
+import { Student } from "../types/student";
+import { InferType } from "yup";
+
+type StudentFormValues = InferType<typeof studentSchema>;
 
 interface Props {
-  onSubmit: (data: Omit<Student, "id">) => void
-  defaultValues?: Student | null
+  onSubmit: (data: StudentFormValues) => void;
+  defaultValues?: Student | null;
 }
 
 const StudentForm = ({ onSubmit, defaultValues }: Props) => {
-
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<Omit<Student, "id">>({
-    resolver: yupResolver(studentSchema),
-  })
+  register,
+  handleSubmit,
+  formState: { errors },
+  reset,
+} = useForm<StudentFormValues>({
+  resolver: yupResolver(studentSchema),
+});
 
-  // Pre-fill form when editing
   useEffect(() => {
     if (defaultValues) {
       reset({
         name: defaultValues.name,
         email: defaultValues.email,
         age: defaultValues.age,
-      })
+      });
     }
-  }, [defaultValues, reset])
+  }, [defaultValues, reset]);
 
-  const submitHandler = (data: Omit<Student, "id">) => {
-    onSubmit(data)
-    reset()
-  }
+  const submitHandler: SubmitHandler<StudentFormValues> = (data) => {
+    onSubmit(data);
+    reset();
+  };
 
   return (
     <form
       onSubmit={handleSubmit(submitHandler)}
       className="bg-white p-6 rounded shadow mb-6"
     >
-
       <h2 className="text-lg font-semibold mb-4">
         {defaultValues ? "Edit Student" : "Add Student"}
       </h2>
 
       <div className="grid grid-cols-3 gap-4">
-
         <div>
           <input
             placeholder="Name"
             {...register("name")}
             className="w-full border p-2 rounded"
           />
-          <p className="text-red-500 text-sm">
-            {errors.name?.message}
-          </p>
+          <p className="text-red-500 text-sm">{errors.name?.message}</p>
         </div>
 
         <div>
@@ -65,9 +62,7 @@ const StudentForm = ({ onSubmit, defaultValues }: Props) => {
             {...register("email")}
             className="w-full border p-2 rounded"
           />
-          <p className="text-red-500 text-sm">
-            {errors.email?.message}
-          </p>
+          <p className="text-red-500 text-sm">{errors.email?.message}</p>
         </div>
 
         <div>
@@ -77,11 +72,8 @@ const StudentForm = ({ onSubmit, defaultValues }: Props) => {
             {...register("age")}
             className="w-full border p-2 rounded"
           />
-          <p className="text-red-500 text-sm">
-            {errors.age?.message}
-          </p>
+          <p className="text-red-500 text-sm">{errors.age?.message}</p>
         </div>
-
       </div>
 
       <button
@@ -90,9 +82,8 @@ const StudentForm = ({ onSubmit, defaultValues }: Props) => {
       >
         {defaultValues ? "Update Student" : "Add Student"}
       </button>
-
     </form>
-  )
-}
+  );
+};
 
-export default StudentForm
+export default StudentForm;
