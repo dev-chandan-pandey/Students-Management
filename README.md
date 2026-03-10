@@ -4,11 +4,11 @@ A frontend CRUD application built with **React, TypeScript, TailwindCSS, and Vit
 
 ## 🚀 Live Demo
 
-https://your-vercel-link.vercel.app
+https://students-management-beta.vercel.app
 
 ## 📦 GitHub Repository
 
-https://github.com/yourusername/students-management-table
+https://github.com/dev-chandan-pandey/Students-Management
 
 ## ✨ Features
 
