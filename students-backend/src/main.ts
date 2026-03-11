@@ -14,19 +14,47 @@
 // }
 // bootstrap()
 
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app.module'
-import { ValidationPipe } from '@nestjs/common'
+// import { NestFactory } from '@nestjs/core'
+// import { AppModule } from './app.module'
+// import { ValidationPipe } from '@nestjs/common'
+
+// async function bootstrap() {
+
+//   const app = await NestFactory.create(AppModule)
+
+//   app.enableCors()
+
+//   app.useGlobalPipes(new ValidationPipe())
+
+//   await app.listen(process.env.PORT || 3000)
+// }
+
+// bootstrap()
+
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
 
-  const app = await NestFactory.create(AppModule)
+  app.enableCors();
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new HttpExceptionFilter());
 
-  app.enableCors()
+  // ✅ Swagger setup
+  const config = new DocumentBuilder()
+    .setTitle('Students API')
+    .setDescription('Students CRUD API')
+    .setVersion('1.0')
+    .build();
 
-  app.useGlobalPipes(new ValidationPipe())
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT || 3000)
+  await app.listen(process.env.PORT || 3000);
 }
 
-bootstrap()
+bootstrap();

@@ -66,6 +66,57 @@
 //     deleteStudent,
 //   };
 // };
+// import { useEffect, useState } from "react"
+// import { Student } from "../types/student"
+// import API from "../utils/api"
+
+// export const useStudents = () => {
+
+//   const [students, setStudents] = useState<Student[]>([])
+//   const [loading, setLoading] = useState(true)
+
+//   // Fetch students
+//   const fetchStudents = async () => {
+//     setLoading(true)
+
+//     const res = await API.get("/students")
+
+//     setStudents(res.data)
+
+//     setLoading(false)
+//   }
+
+//   useEffect(() => {
+//     fetchStudents()
+//   }, [])
+
+//   // Add student
+//   const addStudent = async (data: Omit<Student, "id">) => {
+//     await API.post("/students", data)
+//     fetchStudents()
+//   }
+
+//   // Update student
+//   const updateStudent = async (student: Student) => {
+//     await API.patch(`/students/${student.id}`, student)
+//     fetchStudents()
+//   }
+
+//   // Delete student
+//   const deleteStudent = async (id: number) => {
+//     await API.delete(`/students/${id}`)
+//     fetchStudents()
+//   }
+
+//   return {
+//     students,
+//     loading,
+//     addStudent,
+//     updateStudent,
+//     deleteStudent,
+//   }
+// }
+
 import { useEffect, useState } from "react"
 import { Student } from "../types/student"
 import API from "../utils/api"
@@ -74,35 +125,37 @@ export const useStudents = () => {
 
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
 
-  // Fetch students
+  const limit = 5
+
   const fetchStudents = async () => {
+
     setLoading(true)
 
-    const res = await API.get("/students")
+    const res = await API.get(`/students?page=${page}&limit=${limit}`)
 
-    setStudents(res.data)
+    setStudents(res.data.data)
+    setLastPage(res.data.lastPage)
 
     setLoading(false)
   }
 
   useEffect(() => {
     fetchStudents()
-  }, [])
+  }, [page])
 
-  // Add student
   const addStudent = async (data: Omit<Student, "id">) => {
     await API.post("/students", data)
     fetchStudents()
   }
 
-  // Update student
   const updateStudent = async (student: Student) => {
     await API.patch(`/students/${student.id}`, student)
     fetchStudents()
   }
 
-  // Delete student
   const deleteStudent = async (id: number) => {
     await API.delete(`/students/${id}`)
     fetchStudents()
@@ -114,5 +167,8 @@ export const useStudents = () => {
     addStudent,
     updateStudent,
     deleteStudent,
+    page,
+    setPage,
+    lastPage
   }
 }

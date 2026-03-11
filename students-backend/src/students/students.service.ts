@@ -20,9 +20,23 @@ export class StudentsService {
   }
 
   // READ
-  async findAll(): Promise<Student[]> {
-    return this.studentRepository.find()
+  // async findAll(): Promise<Student[]> {
+  //   return this.studentRepository.find()
+  // }
+  async findAll(page: number, limit: number) {
+
+  const [data, total] = await this.studentRepository.findAndCount({
+    skip: (page - 1) * limit,
+    take: limit,
+  })
+
+  return {
+    data,
+    total,
+    page,
+    lastPage: Math.ceil(total / limit),
   }
+}
 
   // UPDATE
  async update(id: number, updateStudentDto: UpdateStudentDto): Promise<Student | null> {
